@@ -143,10 +143,16 @@
   changed_when: False
 
 # setup extension file for service console UI
+- debug:
+    msg: "template_service_broker_install is {{ template_service_broker_install }}"
+- debug:
+    msg: "openshift_enable_service_catalog is {{ openshift_enable_service_catalog }}"
 - lineinfile:
     dest: /etc/origin/master/openshift-ansible-catalog-console.js
-    line: "window.OPENSHIFT_CONSTANTS.TEMPLATE_SERVICE_BROKER_ENABLED={{ 'true' if (template_service_broker_install | default(True) and openshift_enable_service_catalog | default(True)) else 'false' }}"
+    line: "window.OPENSHIFT_CONSTANTS.TEMPLATE_SERVICE_BROKER_ENABLED={{ 'true' if ((template_service_broker_install | default(True)) and (openshift_enable_service_catalog | default(True))) else 'false' }}"
     create: yes
+- command: cat /etc/origin/master/openshift-ansible-catalog-console.js
+  register: openshift-ansible-catalog-console_content
 
 - name: Update master config
   yedit:
